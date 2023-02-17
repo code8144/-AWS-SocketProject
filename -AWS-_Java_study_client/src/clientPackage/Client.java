@@ -74,7 +74,7 @@ private static Client instance;
 		setBackground(Color.YELLOW);
 		gson = new Gson();
 		
-		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\ITPS\\Desktop\\image\\kakao.png"));
+		setIconImage(Toolkit.getDefaultToolkit().getImage("src\\image\\kakao.png"));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 480, 800);
 		mainPanel = new JPanel();
@@ -142,13 +142,13 @@ private static Client instance;
 			}
 		});
 				
-		loginButton.setIcon(new ImageIcon("C:\\Users\\ITPS\\Desktop\\image\\kakao_login_medium_wide.png"));
+		loginButton.setIcon(new ImageIcon("src\\image\\kakao_login_medium_wide.png"));
 		loginButton.setBackground(Color.BLACK);
 		loginButton.setBounds(83, 465, 290, 35);
 		loginPanel.add(loginButton);
 		
 		JLabel background = new JLabel("");
-		background.setIcon(new ImageIcon("C:\\Users\\ITPS\\Desktop\\image\\kakao.png"));
+		background.setIcon(new ImageIcon("src\\image\\kakao.png"));
 		background.setBounds(0, 0, 464, 761);
 		loginPanel.add(background);
 		
@@ -162,13 +162,13 @@ private static Client instance;
 		chatListPanel.add(list);
 		
 		JLabel logo = new JLabel("");
-		logo.setIcon(new ImageIcon("C:\\Users\\ITPS\\Desktop\\image\\KakaoTalk_20230216_110411110_02.png"));
+		logo.setIcon(new ImageIcon("src\\image\\KakaoTalk_20230216_110411110_02.png"));
 		logo.setBounds(12, 56, 68, 53);
 		chatListPanel.add(logo);
 		
 		JButton produce_room = new JButton("");
 		produce_room.setBackground(new Color(249, 225, 0));
-		produce_room.setIcon(new ImageIcon("C:\\Users\\ITPS\\Desktop\\image\\55.png"));
+		produce_room.setIcon(new ImageIcon("src\\image\\55.png"));
 		produce_room.setBounds(28, 131, 30, 26);
 		chatListPanel.add(produce_room);
 		
@@ -179,7 +179,7 @@ private static Client instance;
 		
 		JLabel Logo = new JLabel("");
 		Logo.setBackground(new Color(255, 230, 33));
-		Logo.setIcon(new ImageIcon("C:\\Users\\ITPS\\Desktop\\image\\666.png"));
+		Logo.setIcon(new ImageIcon("src\\image\\666.png"));
 		Logo.setBounds(25, 10, 40, 36);
 		chatPanel.add(Logo);
 		
@@ -189,7 +189,7 @@ private static Client instance;
 		chatPanel.add(title);
 		
 		JLabel lblNewLabel = new JLabel("");
-		lblNewLabel.setIcon(new ImageIcon("C:\\Users\\ITPS\\Desktop\\image\\777.png"));
+		lblNewLabel.setIcon(new ImageIcon("src\\image\\777.png"));
 		lblNewLabel.setBounds(412, 10, 30, 36);
 		chatPanel.add(lblNewLabel);
 		
