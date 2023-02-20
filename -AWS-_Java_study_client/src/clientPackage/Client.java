@@ -1,16 +1,19 @@
 package clientPackage;
 
+import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -18,8 +21,12 @@ import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
@@ -29,15 +36,6 @@ import com.google.gson.Gson;
 import dto.JoinReqDto;
 import dto.RequestDto;
 import lombok.Getter;
-import clientPackage.ClientReceive;
-
-import java.awt.Color;
-import javax.swing.JLabel;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import javax.swing.JList;
-import java.awt.CardLayout;
-import javax.swing.JTextArea;
 
 @Getter
 public class Client extends JFrame {
@@ -52,7 +50,7 @@ private static Client instance;
 	}
 	
 	private JTextArea chatting;
-	private String username;
+	private String userName;
 	private CardLayout mainCard;
 	private Gson gson;
 	private JPanel mainPanel;
@@ -60,6 +58,7 @@ private static Client instance;
 	private JTextField IdInput;
 	private JList<String> roomList;
 	private DefaultListModel<String> roomListModel;
+	private JScrollPane roomListpane;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -80,7 +79,7 @@ private static Client instance;
 			socket = new Socket("127.0.0.1", 9090);
 			
 			JOptionPane.showMessageDialog(null, 
-					"환영합니다. 사용자님\n사용자명을 입력해주세요", 
+					"서버와 연결되었습니다.", 
 					"카카오톡 알림", 
 					JOptionPane.INFORMATION_MESSAGE);
 			
@@ -162,9 +161,6 @@ private static Client instance;
 		chatListPanel.setLayout(null);
 		
 		roomListModel = new DefaultListModel<>();
-		roomList = new JList<String>(roomListModel);
-		roomList.setBounds(88, 0, 366, 751);
-		chatListPanel.add(roomList);
 		
 		JLabel logo = new JLabel("");
 		logo.setIcon(new ImageIcon("src\\image\\KakaoTalk_20230216_110411110_02.png"));
@@ -181,17 +177,16 @@ private static Client instance;
 			public void mouseClicked(MouseEvent e) {
 				
 				try {
-					socket = new Socket("127.0.0.1", 9090);
 					
 					ClientReceive clientRecive = new ClientReceive(socket);
 					clientRecive.start();
 					
-					username = JOptionPane.showInputDialog(null, 
-							"방 제목을 입력하세요", 
+					userName = JOptionPane.showInputDialog(null, 
+							"사용자의 이름을 입력해주세요.", 
 							"카카오톡 알림", 
 							JOptionPane.INFORMATION_MESSAGE);
 					
-					JoinReqDto joinReqDto = new JoinReqDto(username);
+					JoinReqDto joinReqDto = new JoinReqDto(userName);
 					String joinReqDtoJson = gson.toJson(joinReqDto);
 					RequestDto requestDto = new RequestDto("join", joinReqDtoJson);
 					String requestDtoJson = gson.toJson(requestDto);
@@ -212,6 +207,14 @@ private static Client instance;
 		produce_room.setIcon(new ImageIcon("src\\image\\55.png"));
 		produce_room.setBounds(28, 131, 30, 26);
 		chatListPanel.add(produce_room);
+		
+		roomListpane = new JScrollPane();
+		roomListpane.setBounds(88, 0, 366, 751);
+		chatListPanel.add(roomListpane);
+		
+		roomListModel = new DefaultListModel<>(); 
+		roomList = new JList<String>(roomListModel);
+		roomListpane.setViewportView(roomList);
 		
 		JPanel chatPanel = new JPanel();
 		chatPanel.setBackground(new Color(255, 233, 60));
@@ -238,5 +241,20 @@ private static Client instance;
 		chatting.setBounds(0, 56, 454, 695);
 		chatPanel.add(chatting);
 		}	
+	private void sendRequest(String resource, String body) {
+		OutputStream outputStream;
+		try {
+			outputStream = socket.getOutputStream();
+			PrintWriter out = new PrintWriter(outputStream, true);
+		
+			RequestDto requestDto = new RequestDto(resource, body);
+		
+			out.println(gson.toJson(requestDto));
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	}
 

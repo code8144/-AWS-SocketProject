@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import dto.JoinRespDto;
 import dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
+import simplechatting2.client.ChattingClient;
 
 @RequiredArgsConstructor
 
@@ -34,6 +35,11 @@ public class ClientReceive extends Thread {
 				switch(responseDto.getResource()) {
 				case "join" :
 					JoinRespDto joinRespDto = gson.fromJson(responseDto.getBody(), JoinRespDto.class);
+					Client.getInstance().getRoomListModel().clear();
+					Client.getInstance().getRoomListModel().addElement("=== 방 목록 ===");
+					Client.getInstance().getRoomListModel().addAll(joinRespDto.getConnectedUsers());
+					Client.getInstance().getRoomList().setSelectedIndex(0);
+					break;
 				}
 			}
 		} catch (IOException e) {
