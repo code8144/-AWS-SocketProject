@@ -29,6 +29,11 @@
 	</dependency>
 
 
+	<dependency>
+		<groupId>com.aws</groupId>
+		<artifactId>Client</artifactId>
+		<version>1.0.0</version>
+	</dependency>
   </dependencies>
   <build>
     <sourceDirectory>src</sourceDirectory>

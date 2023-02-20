@@ -12,6 +12,8 @@ import java.util.List;
 
 import com.google.gson.Gson;
 
+import dto.JoinReqDto;
+import dto.RequestDto;
 import lombok.Data;
 @Data
 
@@ -38,6 +40,18 @@ class ConnectedSocket extends Thread {
 			
 			while(true) {
 				String request = in.readLine();
+				RequestDto requestDto = gson.fromJson(request, RequestDto.class);
+				
+				switch(requestDto.getResource()) {
+				case "join": 
+					JoinReqDto joinReqDto = gson.fromJson(requestDto.getBody(), JoinReqDto.class);
+					username = joinReqDto.getUsername();
+					List<String> connectedUsers = new ArrayList<>();
+					for(ConnectedSocket connectedSocket : socketList) {
+						connectedUsers.add(connectedSocket.getUsername());
+					}
+					
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

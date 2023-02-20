@@ -14,6 +14,7 @@ import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -25,7 +26,10 @@ import javax.swing.border.EmptyBorder;
 
 import com.google.gson.Gson;
 
+import dto.JoinReqDto;
 import dto.RequestDto;
+import lombok.Getter;
+import clientPackage.ClientReceive;
 
 import java.awt.Color;
 import javax.swing.JLabel;
@@ -35,6 +39,7 @@ import javax.swing.JList;
 import java.awt.CardLayout;
 import javax.swing.JTextArea;
 
+@Getter
 public class Client extends JFrame {
 	
 private static Client instance;
@@ -45,15 +50,17 @@ private static Client instance;
 		}
 		return instance;
 	}
+	
+	private JTextArea chatting;
+	private String username;
 	private CardLayout mainCard;
 	private Gson gson;
 	private JPanel mainPanel;
 	private Socket socket;
 	private JTextField IdInput;
+	private JList<String> roomList;
+	private DefaultListModel<String> roomListModel;
 
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -67,10 +74,22 @@ private static Client instance;
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
 	public Client() {
+		
+		try {
+			socket = new Socket("127.0.0.1", 9090);
+			
+			JOptionPane.showMessageDialog(null, 
+					"환영합니다. 사용자님\n사용자명을 입력해주세요", 
+					"카카오톡 알림", 
+					JOptionPane.INFORMATION_MESSAGE);
+			
+		} catch (UnknownHostException e2) {
+			e2.printStackTrace();
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		}
+		
 		setBackground(Color.YELLOW);
 		gson = new Gson();
 		
@@ -98,6 +117,10 @@ private static Client instance;
 		loginPanel.add(IdInput);
 		
 		JButton loginButton = new JButton("");
+		loginButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		loginButton.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -109,37 +132,18 @@ private static Client instance;
 			public void mouseClicked(MouseEvent e) {
 				String Id = null;
 				Id = IdInput.getText();
+									
+				ClientReceive clientReceive = new ClientReceive(socket);
+				clientReceive.start();
 				
+				JOptionPane.showMessageDialog(null, 
+						"김상현님 환영합니다.", 
+						"카카오톡 알림", 
+						JOptionPane.INFORMATION_MESSAGE);
+							
+				mainCard.show(mainPanel, "chatListPanel");
 				
-				try {
-					socket = new Socket("127.0.0.1", 9090);
-					
-					JOptionPane.showMessageDialog(null, 
-							"김상현님 환영합니다.", 
-							"카카오톡 알림", 
-							JOptionPane.INFORMATION_MESSAGE);
-					
-					ClientReceive clientReceive = new ClientReceive(socket);
-					clientReceive.start();
-					
-					
-					mainCard.show(mainPanel, "chatListPanel");
-					
-					} catch (ConnectException e1) {
-					
-					JOptionPane.showMessageDialog(null, 
-							"서버 접속 실패", 
-							"접속실패", 
-							JOptionPane.ERROR_MESSAGE);
-					
-				} catch (UnknownHostException e1) {
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-				
-				
-			}
+			}			
 		});
 				
 		loginButton.setIcon(new ImageIcon("src\\image\\kakao_login_medium_wide.png"));
@@ -157,9 +161,10 @@ private static Client instance;
 		mainPanel.add(chatListPanel, "chatListPanel");
 		chatListPanel.setLayout(null);
 		
-		JList list = new JList();
-		list.setBounds(88, 0, 366, 751);
-		chatListPanel.add(list);
+		roomListModel = new DefaultListModel<>();
+		roomList = new JList<String>(roomListModel);
+		roomList.setBounds(88, 0, 366, 751);
+		chatListPanel.add(roomList);
 		
 		JLabel logo = new JLabel("");
 		logo.setIcon(new ImageIcon("src\\image\\KakaoTalk_20230216_110411110_02.png"));
@@ -167,6 +172,42 @@ private static Client instance;
 		chatListPanel.add(logo);
 		
 		JButton produce_room = new JButton("");
+		produce_room.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		produce_room.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				try {
+					socket = new Socket("127.0.0.1", 9090);
+					
+					ClientReceive clientRecive = new ClientReceive(socket);
+					clientRecive.start();
+					
+					username = JOptionPane.showInputDialog(null, 
+							"방 제목을 입력하세요", 
+							"카카오톡 알림", 
+							JOptionPane.INFORMATION_MESSAGE);
+					
+					JoinReqDto joinReqDto = new JoinReqDto(username);
+					String joinReqDtoJson = gson.toJson(joinReqDto);
+					RequestDto requestDto = new RequestDto("join", joinReqDtoJson);
+					String requestDtoJson = gson.toJson(requestDto);
+					
+					OutputStream outputStream = socket.getOutputStream();
+					PrintWriter out = new PrintWriter(outputStream, true);
+					out.println(requestDtoJson);
+					
+				} catch (UnknownHostException e1) {
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		
 		produce_room.setBackground(new Color(249, 225, 0));
 		produce_room.setIcon(new ImageIcon("src\\image\\55.png"));
 		produce_room.setBounds(28, 131, 30, 26);
@@ -193,9 +234,9 @@ private static Client instance;
 		lblNewLabel.setBounds(412, 10, 30, 36);
 		chatPanel.add(lblNewLabel);
 		
-		JTextArea chatting = new JTextArea();
+		chatting = new JTextArea();
 		chatting.setBounds(0, 56, 454, 695);
 		chatPanel.add(chatting);
-	}
+		}	
 	}
 
