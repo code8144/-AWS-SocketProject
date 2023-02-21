@@ -131,19 +131,27 @@ private static Client instance;
 		loginButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				String Id = null;
-				Id = IdInput.getText();
-									
-				ClientReceive clientReceive = new ClientReceive(socket);
-				clientReceive.start();
+			
+				String userName = IdInput.getText();
 				
-				JOptionPane.showMessageDialog(null,
-						Id + "님 환영합니다.", 
-						"카카오톡 알림", 
-						JOptionPane.INFORMATION_MESSAGE);
-							
-				mainCard.show(mainPanel, "chatListPanel");
-				
+				try {
+					JoinReqDto joinReqDto = new JoinReqDto(userName);
+					String joinReqDtoJson = gson.toJson(joinReqDto);
+					RequestDto requestDto = new RequestDto("join", joinReqDtoJson);
+					String requestDtoJson = gson.toJson(requestDto);
+					System.out.println(requestDto.getResource());
+					System.out.println(joinReqDtoJson);
+
+					OutputStream outputStream;
+					outputStream = socket.getOutputStream();
+					PrintWriter out = new PrintWriter(outputStream, true);
+	                out.println(requestDtoJson);
+	                
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}               
+	            ClientReceive clientReceive = new ClientReceive(socket);
+	                clientReceive.start();
 			}			
 		});
 				
