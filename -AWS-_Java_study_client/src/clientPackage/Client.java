@@ -251,7 +251,7 @@ private static Client instance;
 		
 		JButton sendButton = new JButton("");
 		sendButton.setBackground(new Color(255, 255, 255));
-		sendButton.setIcon(new ImageIcon("C:\\junil\\sanghyeon\\workspace\\-AWS-SocketProject\\-AWS-_Java_study_client\\src\\image\\1010.png"));
+		sendButton.setIcon(new ImageIcon("src\\image\\1010.png"));
 		sendButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
