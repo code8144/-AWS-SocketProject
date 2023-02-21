@@ -18,6 +18,7 @@ import dto.JoinRespDto;
 import dto.RequestDto;
 import dto.ResponseDto;
 import lombok.Data;
+import serverPackage.ConnectedSocket;
 @Data
 
 class ConnectedSocket extends Thread {
@@ -70,6 +71,18 @@ class ConnectedSocket extends Thread {
 			PrintWriter out = new PrintWriter(outputStream, true);
 			
 			out.println(gson.toJson(responseDto));
+		}
+	}
+	
+	private void sendToUser(String resource, String status, String body, String toUser) throws IOException {
+		ResponseDto responseDto = new ResponseDto(resource, status, body);
+		for(ConnectedSocket connectedSocket : socketList) {
+			if(connectedSocket.getUsername().equals(toUser) || connectedSocket.getUsername().equals(username)) {
+				OutputStream outputStream = connectedSocket.getSocket().getOutputStream();
+				PrintWriter out = new PrintWriter(outputStream, true);
+				
+				out.println(gson.toJson(responseDto));
+			}
 		}
 	}
 }

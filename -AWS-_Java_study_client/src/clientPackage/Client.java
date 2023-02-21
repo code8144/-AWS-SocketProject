@@ -59,6 +59,7 @@ private static Client instance;
 	private JList<String> roomList;
 	private DefaultListModel<String> roomListModel;
 	private JScrollPane roomListpane;
+	private JTextField chattingMessage;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -108,7 +109,7 @@ private static Client instance;
 		mainPanel.add(loginPanel, "loginPanel");
 		
 		IdInput = new JTextField();
-		IdInput.setText("김상현");
+		IdInput.setText("");
 		IdInput.setHorizontalAlignment(SwingConstants.CENTER);
 		IdInput.setFont(new Font("굴림", Font.BOLD, 20));
 		IdInput.setColumns(10);
@@ -136,7 +137,7 @@ private static Client instance;
 				clientReceive.start();
 				
 				JOptionPane.showMessageDialog(null, 
-						"김상현님 환영합니다.", 
+						Id + "님 환영합니다.", 
 						"카카오톡 알림", 
 						JOptionPane.INFORMATION_MESSAGE);
 							
@@ -195,6 +196,8 @@ private static Client instance;
 					PrintWriter out = new PrintWriter(outputStream, true);
 					out.println(requestDtoJson);
 					
+					mainCard.show(mainPanel, "chatPanel");
+					
 				} catch (UnknownHostException e1) {
 					e1.printStackTrace();
 				} catch (IOException e1) {
@@ -227,19 +230,34 @@ private static Client instance;
 		Logo.setBounds(25, 10, 40, 36);
 		chatPanel.add(Logo);
 		
-		JLabel title = new JLabel("제목 : 김상현님의 방");
-		title.setFont(new Font("맑은 고딕", Font.BOLD, 14));
-		title.setBounds(104, 10, 149, 36);
-		chatPanel.add(title);
-		
-		JLabel lblNewLabel = new JLabel("");
-		lblNewLabel.setIcon(new ImageIcon("src\\image\\777.png"));
-		lblNewLabel.setBounds(412, 10, 30, 36);
-		chatPanel.add(lblNewLabel);
-		
 		chatting = new JTextArea();
-		chatting.setBounds(0, 56, 454, 695);
+		chatting.setBounds(0, 56, 454, 619);
 		chatPanel.add(chatting);
+		
+		JButton outButton = new JButton("");
+		outButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		outButton.setIcon(new ImageIcon("src\\image\\777.png"));
+		outButton.setBackground(new Color(255, 230, 33));
+		outButton.setBounds(402, 10, 40, 36);
+		chatPanel.add(outButton);
+		
+		chattingMessage = new JTextField();
+		chattingMessage.setBounds(0, 673, 383, 78);
+		chatPanel.add(chattingMessage);
+		chattingMessage.setColumns(10);
+		
+		JButton sendButton = new JButton("");
+		sendButton.setBackground(new Color(255, 255, 255));
+		sendButton.setIcon(new ImageIcon("C:\\junil\\sanghyeon\\workspace\\-AWS-SocketProject\\-AWS-_Java_study_client\\src\\image\\1010.png"));
+		sendButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		sendButton.setBounds(382, 673, 72, 78);
+		chatPanel.add(sendButton);
 		}	
 	private void sendRequest(String resource, String body) {
 		OutputStream outputStream;
