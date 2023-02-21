@@ -15,6 +15,8 @@ import com.google.gson.Gson;
 
 import dto.JoinReqDto;
 import dto.JoinRespDto;
+import dto.MessageReqDto;
+import dto.MessageRespDto;
 import dto.RequestDto;
 import dto.ResponseDto;
 import lombok.Data;
@@ -28,7 +30,7 @@ class ConnectedSocket extends Thread {
 	private OutputStream outputStream;
 	private Gson gson;
 	
-	private String username;
+	private String userName;
 	
 	public ConnectedSocket(Socket socket) {
 		this.socket = socket;
@@ -49,14 +51,28 @@ class ConnectedSocket extends Thread {
 				switch(requestDto.getResource()) {
 				case "join" : 
 					JoinReqDto joinReqDto = gson.fromJson(requestDto.getBody(), JoinReqDto.class);
-					username = joinReqDto.getUsername();
+					userName = joinReqDto.getUsername();
 					List<String> connectedUsers = new ArrayList<>();
 					for(ConnectedSocket connectedSocket : socketList) {
-						connectedUsers.add(connectedSocket.getUsername());
+						connectedUsers.add(connectedSocket.getUserName());
 					}
-					JoinRespDto joinRespDto = new JoinRespDto(username + "님의 방", connectedUsers);
+					JoinRespDto joinRespDto = new JoinRespDto(userName + "님의 방", connectedUsers);
 					System.out.println(joinRespDto);
 					sendToAll(requestDto.getResource(), "ok", gson.toJson(joinRespDto));
+					break;
+				case "sendMessage" :
+					MessageReqDto messageReqDto = gson.fromJson(requestDto.getBody(), MessageReqDto.class);
+	
+					if(messageReqDto.getToUser().equalsIgnoreCase("all")) {
+						String message = messageReqDto.getFromUser() + "[전체] : " + messageReqDto.getMessageValue();
+						MessageRespDto messageRespDto = new MessageRespDto(message);
+						sendToAll(requestDto.getResource(), "ok", gson.toJson(messageRespDto));
+					}else {
+						String message = messageReqDto.getFromUser() + "[" + messageReqDto.getToUser() + "]: " + messageReqDto.getMessageValue();
+						MessageRespDto messageRespDto = new MessageRespDto(message);
+						sendToUser(requestDto.getResource(), "ok", gson.toJson(messageRespDto), messageReqDto.getToUser());
+					}
+					break;
 				}
 			}
 		} catch (IOException e) {
@@ -77,7 +93,7 @@ class ConnectedSocket extends Thread {
 	private void sendToUser(String resource, String status, String body, String toUser) throws IOException {
 		ResponseDto responseDto = new ResponseDto(resource, status, body);
 		for(ConnectedSocket connectedSocket : socketList) {
-			if(connectedSocket.getUsername().equals(toUser) || connectedSocket.getUsername().equals(username)) {
+			if(connectedSocket.getUserName().equals(toUser) || connectedSocket.getUserName().equals(userName)) {
 				OutputStream outputStream = connectedSocket.getSocket().getOutputStream();
 				PrintWriter out = new PrintWriter(outputStream, true);
 				

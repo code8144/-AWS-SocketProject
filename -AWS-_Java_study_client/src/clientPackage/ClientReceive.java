@@ -9,6 +9,7 @@ import java.net.Socket;
 import com.google.gson.Gson;
 
 import dto.JoinRespDto;
+import dto.MessageReqDto;
 import dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 
@@ -29,7 +30,8 @@ public class ClientReceive extends Thread {
 			
 			while(true) {
 				String request = in.readLine();
-				System.out.println(request);
+				//
+				System.out.println("test" + request);
 				ResponseDto responseDto = gson.fromJson(request, ResponseDto.class);
 				switch(responseDto.getResource()) {
 				case "join" :
@@ -39,6 +41,9 @@ public class ClientReceive extends Thread {
 					Client.getInstance().getRoomListModel().addAll(joinRespDto.getConnectedUsers());
 					Client.getInstance().getRoomList().setSelectedIndex(0);
 					break;
+				case "sendMessage" :
+					MessageReqDto messageReqDto = gson.fromJson(responseDto.getBody(), MessageReqDto.class);
+					Client.getInstance().getChattingResult().append(messageReqDto.getMessageValue() + "\n");
 				}
 			}
 		} catch (IOException e) {

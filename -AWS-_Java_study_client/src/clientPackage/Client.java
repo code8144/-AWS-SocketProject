@@ -34,6 +34,7 @@ import javax.swing.border.EmptyBorder;
 import com.google.gson.Gson;
 
 import dto.JoinReqDto;
+import dto.MessageReqDto;
 import dto.RequestDto;
 import lombok.Getter;
 
@@ -49,7 +50,7 @@ private static Client instance;
 		return instance;
 	}
 	
-	private JTextArea chatting;
+	private JTextArea chattingResult;
 	private String userName;
 	private CardLayout mainCard;
 	private Gson gson;
@@ -136,7 +137,7 @@ private static Client instance;
 				ClientReceive clientReceive = new ClientReceive(socket);
 				clientReceive.start();
 				
-				JOptionPane.showMessageDialog(null, 
+				JOptionPane.showMessageDialog(null,
 						Id + "님 환영합니다.", 
 						"카카오톡 알림", 
 						JOptionPane.INFORMATION_MESSAGE);
@@ -230,9 +231,9 @@ private static Client instance;
 		Logo.setBounds(25, 10, 40, 36);
 		chatPanel.add(Logo);
 		
-		chatting = new JTextArea();
-		chatting.setBounds(0, 56, 454, 619);
-		chatPanel.add(chatting);
+		chattingResult = new JTextArea();
+		chattingResult.setBounds(0, 56, 454, 619);
+		chatPanel.add(chattingResult);
 		
 		JButton outButton = new JButton("");
 		outButton.addActionListener(new ActionListener() {
@@ -245,11 +246,27 @@ private static Client instance;
 		chatPanel.add(outButton);
 		
 		chattingMessage = new JTextField();
+		chattingMessage.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+					sendMessage();
+				}
+			}
+		});
 		chattingMessage.setBounds(0, 673, 383, 78);
 		chatPanel.add(chattingMessage);
 		chattingMessage.setColumns(10);
 		
 		JButton sendButton = new JButton("");
+		sendButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(!chattingMessage.getText().isBlank()) {
+					sendMessage();
+				}
+			}
+		});
 		sendButton.setBackground(new Color(255, 255, 255));
 		sendButton.setIcon(new ImageIcon("src\\image\\1010.png"));
 		sendButton.addActionListener(new ActionListener() {
@@ -274,5 +291,19 @@ private static Client instance;
 		}
 	}
 	
+	private void sendMessage() {
+		if(!chattingMessage.getText().isBlank()) {
+			String toUser = roomList.getSelectedIndex() == 0 ? "all" : roomList.getSelectedValue();
+			
+			MessageReqDto messageReqDto =
+					new MessageReqDto(toUser, userName, chattingMessage.getText());
+			
+			sendRequest("sendMessage", gson.toJson(messageReqDto));
+			
+			chattingMessage.setText("");
+		}
 	}
+	
+		
+}
 
