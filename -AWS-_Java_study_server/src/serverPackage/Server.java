@@ -77,6 +77,7 @@ class ConnectedSocket extends Thread {
 		                  out.println(gson.toJson(responseDto));
 		               } catch (IOException e) {
 		                  e.printStackTrace();
+		                  
 		               }
 
 //		               System.out.println(userName + "님이 접속하셨습니다.");
