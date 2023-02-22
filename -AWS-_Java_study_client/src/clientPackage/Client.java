@@ -152,13 +152,13 @@ public class Client extends JFrame {
 
 		JLabel background = new JLabel("");
 		background.setIcon(new ImageIcon("src\\image\\kakao.png"));
-		background.setBounds(162, 27, 464, 761);
+		background.setBounds(-12, 0, 476, 751);
 		loginPanel.add(background);
 
 		JPanel chatListPanel = new JPanel();
 		chatListPanel.setBackground(new Color(255, 233, 30));
 		mainPanel.add(chatListPanel, "chatListPanel");
-		chatListPanel.setLayout(null);
+		chatListPanel.setLayout(null);   
 
 		roomListModel = new DefaultListModel<>();
 
@@ -179,14 +179,17 @@ public class Client extends JFrame {
 				try {
 					roomName = JOptionPane.showInputDialog(null, "방제목을 입력해주세요.", "카카오톡 알림",
 							JOptionPane.INFORMATION_MESSAGE);
-
-					RequestDto requestDto = new RequestDto("create", roomName);
+					
+					//requestDto 안에있는 resource("create"),body(roomName)을 넣음
+					RequestDto requestDto = new RequestDto("create", roomName);	
+					
+					//위의 requestDto를 toJson을 이용하여 gson형태의 데이터로 변환시키고 requestDtoJson에 넣음
 					String requestDtoJson = gson.toJson(requestDto);
 
 					System.out.println(requestDtoJson);
 					OutputStream outputStream = socket.getOutputStream();
 					PrintWriter out = new PrintWriter(outputStream, true);
-					out.println(requestDtoJson);
+					out.println(requestDtoJson); //requestDtoJson을 서버로 전송
 
 				} catch (UnknownHostException e1) {
 					e1.printStackTrace();
@@ -276,11 +279,8 @@ public class Client extends JFrame {
 		try {
 			outputStream = socket.getOutputStream();
 			PrintWriter out = new PrintWriter(outputStream, true);
-
 			RequestDto requestDto = new RequestDto(resource, body);
-
 			out.println(gson.toJson(requestDto));
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -301,17 +301,18 @@ public class Client extends JFrame {
 		String userName = IdInput.getText();
 
 		try {
-			JoinReqDto joinReqDto = new JoinReqDto(userName);
-			String joinReqDtoJson = gson.toJson(joinReqDto);
-			RequestDto requestDto = new RequestDto("join", joinReqDtoJson);
-			String requestDtoJson = gson.toJson(requestDto);
-			System.out.println(requestDto.getResource());
+			JoinReqDto joinReqDto = new JoinReqDto(userName);	// username을 joinReqDto에 저장
+			String joinReqDtoJson = gson.toJson(joinReqDto);	// joinReqDto을 json으로 변경후 joinReqDtoJson에 저장
+			RequestDto requestDto = new RequestDto("join", joinReqDtoJson);	// requestDto에 resourse(join)와 body(joinReqDtoJson) 저장
+			String requestDtoJson = gson.toJson(requestDto);	// 저장된 requestDto를 json으로 변경후 requestDtoJson에 저장
+			// json으로 넘기는 이유 : 값을 그대로 넘기기 위해
+			System.out.println(requestDto.getResource());	
 			System.out.println(joinReqDtoJson);
 
-			OutputStream outputStream;
-			outputStream = socket.getOutputStream();
-			PrintWriter out = new PrintWriter(outputStream, true);
-			out.println(requestDtoJson);
+			OutputStream outputStream;	
+			outputStream = socket.getOutputStream();	// outputStream  열어주고
+			PrintWriter out = new PrintWriter(outputStream, true);	
+			out.println(requestDtoJson);	// requestDtoJson을 서버로 보내줌
 
 		} catch (IOException e1) {
 			e1.printStackTrace();

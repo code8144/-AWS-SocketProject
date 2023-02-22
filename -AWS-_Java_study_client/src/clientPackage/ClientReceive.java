@@ -33,17 +33,19 @@ public class ClientReceive extends Thread {
 				
 			while(true) {
 				String request = in.readLine();
-				//
 				System.out.println("test" + request);
 				ResponseDto responseDto = gson.fromJson(request, ResponseDto.class);
 				switch(responseDto.getResource()) {
 				case "joinSuccess" :
+					// chatListPanel로 넘어감
 					Client.getInstance().getMainCard().show(Client.getInstance().getMainPanel(), "chatListPanel");
 					break;
 				case "reflashRoom" :
+					// responseDto 객체의 body 필드에서 추출한 문자열을 List 객체로 변환하는 부분
+					// gson.fromJson() 메소드를 사용하여 문자열을 Java 객체로 변환
 					List<String> roomNameList = gson.fromJson(responseDto.getBody(), List.class);
-					Client.getInstance().getRoomListModel().clear();
-	                Client.getInstance().getRoomListModel().addAll(roomNameList);
+					Client.getInstance().getRoomListModel().clear();	// 
+	                Client.getInstance().getRoomListModel().addAll(roomNameList);	// 방 리스트 현황정보 보여줌
 					break;
 				case "usernameError" :
 					String errorMessage = responseDto.getBody();
