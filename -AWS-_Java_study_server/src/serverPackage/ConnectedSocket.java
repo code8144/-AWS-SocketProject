@@ -13,6 +13,7 @@ import java.util.List;
 import com.google.gson.Gson;
 
 import dto.JoinReqDto;
+import dto.JoinRespDto;
 import dto.RequestDto;
 import dto.ResponseDto;
 import dto.RoomReqDto;
@@ -82,6 +83,7 @@ public class ConnectedSocket extends Thread {
 						ResponseDto createSuccessResponseDto = new ResponseDto("createSuccess", "ok", room.getRoomName());
 						sendToMe(createSuccessResponseDto); //sendToMe에 매개변수 responseDto대신 createSuccessResponseDto를 넣어서 outputStream해줌
 						reflashRoomList();
+						
 						break;
 	//					
 	//					//roomName 중복검사

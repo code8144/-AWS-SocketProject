@@ -51,7 +51,6 @@ public class Client extends JFrame {
 		return instance;
 	}
 	private String roomName;
-	private JTextArea chattingResult;
 	private String userName;
 	private CardLayout mainCard;
 	private Gson gson;
@@ -63,7 +62,7 @@ public class Client extends JFrame {
 	private JScrollPane roomListpane;
 	private JTextField chattingMessage;
 	private JLabel roomTitle;
-
+	private JTextArea chattingResult;
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -225,12 +224,8 @@ public class Client extends JFrame {
 		
 		roomTitle = new JLabel("");
 		roomTitle.setFont(new Font("맑은 고딕", Font.BOLD, 20));
-		roomTitle.setBounds(80, 10, 200, 30);
+		roomTitle.setBounds(77, 10, 200, 30);
 		chatPanel.add(roomTitle);
-
-		chattingResult = new JTextArea();
-		chattingResult.setBounds(0, 56, 454, 619);
-		chatPanel.add(chattingResult);
 
 		JButton outButton = new JButton("");
 		outButton.addActionListener(new ActionListener() {
@@ -272,6 +267,14 @@ public class Client extends JFrame {
 		});
 		sendButton.setBounds(382, 673, 72, 78);
 		chatPanel.add(sendButton);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(0, 56, 454, 619);
+		chatPanel.add(scrollPane);
+		
+		chattingResult = new JTextArea();
+		chattingResult.setEditable(false);
+		scrollPane.setViewportView(chattingResult);
 	}
 
 	private void sendRequest(String resource, String body) {

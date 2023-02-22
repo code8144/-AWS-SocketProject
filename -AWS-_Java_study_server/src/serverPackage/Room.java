@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Data;
-
+import lombok.Getter;
+@Getter
 @Data
 public class Room {
 	private String roomName;

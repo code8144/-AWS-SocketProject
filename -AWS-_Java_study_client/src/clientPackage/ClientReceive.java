@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 
 import com.google.gson.Gson;
 
+import dto.JoinReqDto;
 import dto.JoinRespDto;
 import dto.MessageReqDto;
 import dto.ResponseDto;
@@ -64,7 +65,6 @@ public class ClientReceive extends Thread {
 					String roomName = responseDto.getBody();
 					Client.getInstance().getRoomTitle().setText(roomName);
 					Client.getInstance().getMainCard().show(Client.getInstance().getMainPanel(), "chatPanel");
-					
 					break;
 				
 				case "sendMessage" :
