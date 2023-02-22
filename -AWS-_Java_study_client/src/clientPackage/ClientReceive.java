@@ -65,6 +65,7 @@ public class ClientReceive extends Thread {
 					String roomName = responseDto.getBody();
 					Client.getInstance().getRoomTitle().setText(roomName);
 					Client.getInstance().getMainCard().show(Client.getInstance().getMainPanel(), "chatPanel");
+					Client.getInstance().getChattingResult().setText(Client.getInstance().getUserName() + "님이 채팅방에 입장하셨습니다.");
 					break;
 				
 				case "sendMessage" :

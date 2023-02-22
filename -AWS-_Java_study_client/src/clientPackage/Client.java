@@ -210,6 +210,7 @@ public class Client extends JFrame {
 		roomListModel = new DefaultListModel<>();
 		roomList = new JList<String>(roomListModel);
 		roomListpane.setViewportView(roomList);
+		
 
 		JPanel chatPanel = new JPanel();
 		chatPanel.setBackground(new Color(255, 233, 60));
@@ -228,6 +229,12 @@ public class Client extends JFrame {
 		chatPanel.add(roomTitle);
 
 		JButton outButton = new JButton("");
+		outButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				mainCard.show(mainPanel, "chatListPanel");
+			}
+		});
 		outButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
@@ -301,7 +308,7 @@ public class Client extends JFrame {
 		}
 	}
 	private void login() {
-		String userName = IdInput.getText();
+		userName = IdInput.getText();
 
 		try {
 			JoinReqDto joinReqDto = new JoinReqDto(userName);	// username을 joinReqDto에 저장
