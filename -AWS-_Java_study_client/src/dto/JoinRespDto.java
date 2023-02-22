@@ -9,6 +9,5 @@ import lombok.Data;
 @Data
 
 public class JoinRespDto {
-	private String hostName;
 	private List<String> connectedUsers;
 }

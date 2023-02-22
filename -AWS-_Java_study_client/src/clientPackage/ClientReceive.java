@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -36,27 +37,34 @@ public class ClientReceive extends Thread {
 				System.out.println("test" + request);
 				ResponseDto responseDto = gson.fromJson(request, ResponseDto.class);
 				switch(responseDto.getResource()) {
-				case "join" :
-					JoinRespDto joinRespDto = gson.fromJson(responseDto.getBody(), JoinRespDto.class);
-	                  System.out.println(responseDto.getStatus());
+				case "joinSuccess" :
+					Client.getInstance().getMainCard().show(Client.getInstance().getMainPanel(), "chatListPanel");
+					break;
+				case "reflashRoom" :
+					List<String> roomNameList = gson.fromJson(responseDto.getBody(), List.class);
+					Client.getInstance().getRoomListModel().clear();
+	                Client.getInstance().getRoomListModel().addAll(roomNameList);
+					break;
+				case "usernameError" :
+					String errorMessage = responseDto.getBody();
+	                 
+					JOptionPane.showMessageDialog(null, errorMessage, "카카오톡 알림", JOptionPane.ERROR_MESSAGE);
 
-	                  if(responseDto.getStatus().equalsIgnoreCase("no")) {
-	                     JOptionPane.showMessageDialog(null, "중복된 이름입니다.", "카카오톡 알림", JOptionPane.ERROR_MESSAGE);
-
-	                     break;
-	                  } else if(responseDto.getStatus().equalsIgnoreCase("ok")) {
-	                     Client.getInstance().getMainCard().show(Client.getInstance().getMainPanel(), "chatListPanel");
-	                     
-	                     break;
-	                  }
-	                  break;
-	                  
+					break;
 //					JoinRespDto joinRespDto = gson.fromJson(responseDto.getBody(), JoinRespDto.class);
 //					Client.getInstance().getRoomListModel().clear();
 //					Client.getInstance().getRoomListModel().addElement("=== 방 목록 ===");
 //					Client.getInstance().getRoomListModel().addAll(joinRespDto.getConnectedUsers());
 //					Client.getInstance().getRoomList().setSelectedIndex(0);
 //					break;
+				
+				case "createSuccess" :
+					String roomName = responseDto.getBody();
+					Client.getInstance().getRoomTitle().setText(roomName);
+					Client.getInstance().getMainCard().show(Client.getInstance().getMainPanel(), "chatPanel");
+					
+					break;
+				
 				case "sendMessage" :
 					MessageReqDto messageReqDto = gson.fromJson(responseDto.getBody(), MessageReqDto.class);
 					Client.getInstance().getChattingResult().append(messageReqDto.getMessageValue() + "\n");
