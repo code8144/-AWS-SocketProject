@@ -99,8 +99,10 @@ public class ConnectedSocket extends Thread {
 					for(Room r : rooms) {
 						if (r.getRoomName().equals(selectRoomName)) {
 							selectUserName = r.getKingName();
+							r.getUsers().add(this);
+							break;
 						}
-						break;
+						
 					}
 
 					ResponseDto joinRoomResponseDto = new ResponseDto("joinRoomSuccess", "ok", selectRoomName);
