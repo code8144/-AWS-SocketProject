@@ -347,7 +347,7 @@ public class Client extends JFrame {
 	      OutputStream outputStream;   
 	      
 	      try {
-	         RequestDto requestDto = new RequestDto("joinRoom", roomList.getSelectedValue() + "님의 방");
+	         RequestDto requestDto = new RequestDto("joinRoom", roomList.getSelectedValue());
 	         
 	         String requestDtoJson = gson.toJson(requestDto);
 	         outputStream = socket.getOutputStream();// outputStream  열어주고

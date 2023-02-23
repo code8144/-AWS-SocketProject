@@ -114,7 +114,7 @@ public class ConnectedSocket extends Thread {
 						String message = messageReqDto.getFromUser() + " : " + messageReqDto.getMessageValue();
 						MessageRespDto messageRespDto = new MessageRespDto(message);
 						for (Room r : rooms) {
-							responseDto = new ResponseDto(requestDto.getResource(), "ok", gson.toJson(messageRespDto));
+							responseDto = new ResponseDto("sendMessage", "ok", gson.toJson(messageRespDto));
 							sendToAll(responseDto, r.getUsers());
 						}
 					} else {
