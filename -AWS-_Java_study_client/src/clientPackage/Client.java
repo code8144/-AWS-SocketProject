@@ -213,7 +213,8 @@ public class Client extends JFrame {
 		roomList.addMouseListener(new MouseAdapter() {
 	         @Override
 	         public void mouseClicked(MouseEvent e) {
-	            joinRoom();
+//	            joinRoom();
+	            mainCard.show(mainPanel, "ChatPanel");
 	         }
 	      });
 
@@ -344,9 +345,11 @@ public class Client extends JFrame {
 	         outputStream = socket.getOutputStream();// outputStream  열어주고
 	         PrintWriter out = new PrintWriter(outputStream, true);   
 	         out.println(requestDtoJson);   // requestDtoJson을 서버로 보내줌
+	         
 	      } catch (IOException e) {
 	         e.printStackTrace();
 	      }   
+	      
 	   }
 
 }
