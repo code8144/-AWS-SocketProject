@@ -50,7 +50,6 @@ public class Client extends JFrame {
 		}
 		return instance;
 	}
-
 	private String roomName;
 	private String userName;
 	private CardLayout mainCard;
@@ -64,7 +63,6 @@ public class Client extends JFrame {
 	private JTextField chattingMessage;
 	private JLabel roomTitle;
 	private JTextArea chattingResult;
-
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -159,7 +157,7 @@ public class Client extends JFrame {
 		JPanel chatListPanel = new JPanel();
 		chatListPanel.setBackground(new Color(255, 233, 30));
 		mainPanel.add(chatListPanel, "chatListPanel");
-		chatListPanel.setLayout(null);
+		chatListPanel.setLayout(null);   
 
 		roomListModel = new DefaultListModel<>();
 
@@ -176,34 +174,34 @@ public class Client extends JFrame {
 		produce_room.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-
+				
 				try {
 					roomName = JOptionPane.showInputDialog(null, "방제목을 입력해주세요.", "카카오톡 알림",
 							JOptionPane.INFORMATION_MESSAGE);
+					
+					if(roomName == null || roomName.equals("")) {
+						JOptionPane.showMessageDialog(null, "방 제목을 다시 확인해주세요.", "카카오톡 알림", JOptionPane.ERROR_MESSAGE);
+					}else {
+						//requestDto 안에있는 resource("create"),body(roomName)을 넣음
+					RequestDto requestDto = new RequestDto("create", roomName);	
+					
+					//위의 requestDto를 toJson을 이용하여 gson형태의 데이터로 변환시키고 requestDtoJson에 넣음
+					String requestDtoJson = gson.toJson(requestDto);
 
-					// requestDto 안에있는 resource("create"),body(roomName)을 넣음
-					RequestDto requestDto = new RequestDto("create", roomName);
-
-					if (roomName == null || roomName.equals("")) {
-						JOptionPane.showMessageDialog(null, "방 제목을 확인해주세요.", "카카오톡 알림", JOptionPane.ERROR_MESSAGE);
-					} else {
-						
-						String requestDtoJson = gson.toJson(requestDto);
-						System.out.println(requestDtoJson);
-						OutputStream outputStream = socket.getOutputStream();
-						PrintWriter out = new PrintWriter(outputStream, true);
-						out.println(requestDtoJson); // requestDtoJson을 서버로 전송
-						
+					System.out.println(requestDtoJson);
+					OutputStream outputStream = socket.getOutputStream();
+					PrintWriter out = new PrintWriter(outputStream, true);
+					out.println(requestDtoJson); //requestDtoJson을 서버로 전송
 					}
-					// 위의 requestDto를 toJson을 이용하여 gson형태의 데이터로 변환시키고 requestDtoJson에 넣음
 
 				} catch (UnknownHostException e1) {
 					e1.printStackTrace();
 				} catch (IOException e1) {
 					e1.printStackTrace();
-
 				}
+				
 			}
+			
 		});
 
 		produce_room.setBackground(new Color(249, 225, 0));
@@ -219,11 +217,14 @@ public class Client extends JFrame {
 		roomList = new JList<String>(roomListModel);
 		roomListpane.setViewportView(roomList);
 		roomList.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				joinRoom();
-			}
-		});
+	         @Override
+	         public void mouseClicked(MouseEvent e) {
+	        	 if(e.getClickCount() == 2) {
+	                 joinRoom();
+	        	 }
+	         }
+	     });
+	            
 
 		JPanel chatPanel = new JPanel();
 		chatPanel.setBackground(new Color(255, 233, 60));
@@ -235,7 +236,7 @@ public class Client extends JFrame {
 		Logo.setIcon(new ImageIcon("src\\image\\666.png"));
 		Logo.setBounds(25, 10, 40, 36);
 		chatPanel.add(Logo);
-
+		
 		roomTitle = new JLabel("");
 		roomTitle.setFont(new Font("맑은 고딕", Font.BOLD, 20));
 		roomTitle.setBounds(77, 10, 200, 30);
@@ -287,11 +288,11 @@ public class Client extends JFrame {
 		});
 		sendButton.setBounds(382, 673, 72, 78);
 		chatPanel.add(sendButton);
-
+		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(0, 56, 454, 619);
 		chatPanel.add(scrollPane);
-
+		
 		chattingResult = new JTextArea();
 		chattingResult.setEditable(false);
 		scrollPane.setViewportView(chattingResult);
@@ -320,46 +321,43 @@ public class Client extends JFrame {
 			chattingMessage.setText("");
 		}
 	}
-
 	private void login() {
 		userName = IdInput.getText();
 
 		try {
-			JoinReqDto joinReqDto = new JoinReqDto(userName); // username을 joinReqDto에 저장
-			String joinReqDtoJson = gson.toJson(joinReqDto); // joinReqDto을 json으로 변경후 joinReqDtoJson에 저장
-			RequestDto requestDto = new RequestDto("join", joinReqDtoJson); // requestDto에 resourse(join)와
-																			// body(joinReqDtoJson) 저장
-			String requestDtoJson = gson.toJson(requestDto); // 저장된 requestDto를 json으로 변경후 requestDtoJson에 저장
+			JoinReqDto joinReqDto = new JoinReqDto(userName);	// username을 joinReqDto에 저장
+			String joinReqDtoJson = gson.toJson(joinReqDto);	// joinReqDto을 json으로 변경후 joinReqDtoJson에 저장
+			RequestDto requestDto = new RequestDto("join", joinReqDtoJson);	// requestDto에 resourse(join)와 body(joinReqDtoJson) 저장
+			String requestDtoJson = gson.toJson(requestDto);	// 저장된 requestDto를 json으로 변경후 requestDtoJson에 저장
 			// json으로 넘기는 이유 : 값을 그대로 넘기기 위해
-			System.out.println(requestDto.getResource());
+			System.out.println(requestDto.getResource());	
 			System.out.println(joinReqDtoJson);
 
-			OutputStream outputStream;
-			outputStream = socket.getOutputStream(); // outputStream 열어주고
-			PrintWriter out = new PrintWriter(outputStream, true);
-			out.println(requestDtoJson); // requestDtoJson을 서버로 보내줌
+			OutputStream outputStream;	
+			outputStream = socket.getOutputStream();	// outputStream  열어주고
+			PrintWriter out = new PrintWriter(outputStream, true);	
+			out.println(requestDtoJson);	// requestDtoJson을 서버로 보내줌
 
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 	}
-
 	private void joinRoom() {
-
-		OutputStream outputStream;
-
-		try {
-			RequestDto requestDto = new RequestDto("joinRoom", roomList.getSelectedValue());
-
-			String requestDtoJson = gson.toJson(requestDto);
-			outputStream = socket.getOutputStream();// outputStream 열어주고
-			PrintWriter out = new PrintWriter(outputStream, true);
-			out.println(requestDtoJson); // requestDtoJson을 서버로 보내줌
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
+	      
+	      OutputStream outputStream;   
+	      
+	      try {
+	         RequestDto requestDto = new RequestDto("joinRoom", roomList.getSelectedValue() + "님의 방");
+	         
+	         String requestDtoJson = gson.toJson(requestDto);
+	         outputStream = socket.getOutputStream();// outputStream  열어주고
+	         PrintWriter out = new PrintWriter(outputStream, true);   
+	         out.println(requestDtoJson);   // requestDtoJson을 서버로 보내줌
+	         
+	      } catch (IOException e) {
+	         e.printStackTrace();
+	      }   
+	      
+	   }
 
 }

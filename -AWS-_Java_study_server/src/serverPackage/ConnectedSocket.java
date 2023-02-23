@@ -13,12 +13,11 @@ import java.util.List;
 import com.google.gson.Gson;
 
 import dto.JoinReqDto;
-import dto.JoinRespDto;
+import dto.MessageReqDto;
+import dto.MessageRespDto;
 import dto.RequestDto;
 import dto.ResponseDto;
-import dto.RoomReqDto;
 import lombok.Data;
-import serverPackage.ConnectedSocket;
 
 @Data
 public class ConnectedSocket extends Thread {
@@ -84,7 +83,7 @@ public class ConnectedSocket extends Thread {
 
 				case "create":
 					String roomName = requestDto.getBody(); // roomName에 requestDto.getBody()를 넣음
-					Room room = new Room(roomName, userName);// Room 객체를 생성하여 매개변수에 roomName(requestDto.getBody())과
+					Room room = new Room(roomName, userName );// Room 객체를 생성하여 매개변수에 roomName(requestDto.getBody())과
 																// kingName(userName)을 넣음
 					rooms.add(room); // room을 rooms의 List로 넣음
 					ResponseDto createSuccessResponseDto = new ResponseDto("createSuccess", "ok", room.getRoomName());
@@ -94,28 +93,37 @@ public class ConnectedSocket extends Thread {
 					break;
 
 				case "joinRoom":
-					String selectUserName = null;
+					System.out.println(requestDto.getBody());
 					String selectRoomName = requestDto.getBody();
-					for(Room r : rooms) {
+					for (Room r : rooms) {
 						if (r.getRoomName().equals(selectRoomName)) {
-							selectUserName = r.getKingName();
 							r.getUsers().add(this);
+
 							break;
 						}
-						
 					}
 
 					ResponseDto joinRoomResponseDto = new ResponseDto("joinRoomSuccess", "ok", selectRoomName);
-					OutputStream outputStream;
-					for (ConnectedSocket connectedSocket : socketList) {
-						if (connectedSocket.getUserName().equals(selectUserName)
-								|| connectedSocket.getUserName().equals(userName)) {
-							outputStream = connectedSocket.getSocket().getOutputStream();
-							PrintWriter out = new PrintWriter(outputStream, true);
-
-							out.println(gson.toJson(joinRoomResponseDto));
+					sendToMe(joinRoomResponseDto);
+					break;
+					
+				case "sendMessage":
+					MessageReqDto messageReqDto = gson.fromJson(requestDto.getBody(), MessageReqDto.class);
+					ResponseDto responseDto;
+					if (messageReqDto.getToUser().equalsIgnoreCase("all")) {
+						String message = messageReqDto.getFromUser() + " : " + messageReqDto.getMessageValue();
+						MessageRespDto messageRespDto = new MessageRespDto(message);
+						for (Room r : rooms) {
+							responseDto = new ResponseDto(requestDto.getResource(), "ok", gson.toJson(messageRespDto));
+							sendToAll(responseDto, r.getUsers());
 						}
-					}
+					} else {
+					 String message = messageReqDto.getFromUser() + "[" +
+					 messageReqDto.getToUser() + "]: " + messageReqDto.getMessageValue();
+					 MessageRespDto messageRespDto = new MessageRespDto(message);
+					 
+					 messageReqDto.getToUser();
+					 }
 					
 					break;
 
