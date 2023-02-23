@@ -210,7 +210,12 @@ public class Client extends JFrame {
 		roomListModel = new DefaultListModel<>();
 		roomList = new JList<String>(roomListModel);
 		roomListpane.setViewportView(roomList);
-		
+		roomList.addMouseListener(new MouseAdapter() {
+	         @Override
+	         public void mouseClicked(MouseEvent e) {
+	            joinRoom();
+	         }
+	      });
 
 		JPanel chatPanel = new JPanel();
 		chatPanel.setBackground(new Color(255, 233, 60));
@@ -328,5 +333,20 @@ public class Client extends JFrame {
 			e1.printStackTrace();
 		}
 	}
+	private void joinRoom() {
+	      
+	      OutputStream outputStream;   
+	      
+	      try {
+	         RequestDto requestDto = new RequestDto("joinRoom", roomList.getSelectedValue());
+	         
+	         String requestDtoJson = gson.toJson(requestDto);
+	         outputStream = socket.getOutputStream();// outputStream  열어주고
+	         PrintWriter out = new PrintWriter(outputStream, true);   
+	         out.println(requestDtoJson);   // requestDtoJson을 서버로 보내줌
+	      } catch (IOException e) {
+	         e.printStackTrace();
+	      }   
+	   }
 
 }

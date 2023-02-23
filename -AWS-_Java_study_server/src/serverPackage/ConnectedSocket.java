@@ -83,8 +83,24 @@ public class ConnectedSocket extends Thread {
 						ResponseDto createSuccessResponseDto = new ResponseDto("createSuccess", "ok", room.getRoomName());
 						sendToMe(createSuccessResponseDto); //sendToMe에 매개변수 responseDto대신 createSuccessResponseDto를 넣어서 outputStream해줌
 						reflashRoomList();
-						
 						break;
+						
+					case "joinRoom" :
+		                  String selectRoomName = requestDto.getBody();
+		                  
+		                  
+		                  
+		                  ResponseDto joinRoomResponseDto = new ResponseDto("joinRoomSuccess", "ok", selectRoomName);
+		                  OutputStream outputStream;
+		                  try {
+		                     outputStream = socket.getOutputStream();
+		                     PrintWriter out = new PrintWriter(outputStream, true);
+		                     out.println(gson.toJson(joinRoomResponseDto));
+		                  } catch (IOException e) {
+		                     e.printStackTrace();
+		                  }
+		                  break;
+	
 	//					
 	//					//roomName 중복검사
 	//					if(roomName == null || roomName.isEmpty() || roomList.contains(roomName)) {
