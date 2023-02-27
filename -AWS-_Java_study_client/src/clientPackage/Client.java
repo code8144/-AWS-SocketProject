@@ -315,7 +315,7 @@ public class Client extends JFrame {
 			String toUser = roomList.getSelectedIndex() == 0 ? "all" : roomList.getSelectedValue();
 
 			MessageReqDto messageReqDto = new MessageReqDto(toUser, userName, chattingMessage.getText());
-
+       
 			sendRequest("sendMessage", gson.toJson(messageReqDto));
 
 			chattingMessage.setText("");
